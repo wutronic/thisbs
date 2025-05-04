@@ -94,4 +94,12 @@ DEBUGGING & SYSTEM VERIFICATION LOG (2024-06-12):
 - Confirmed end-to-end flow: user submits link, backend downloads video, converts to WAV, transcribes with Whisper, and returns transcript to frontend for display.
 
 FUTURE FEATURE LOG (2024-06-12):
-- Planned for future implementation: async job queue/status endpoint for polling transcript progress and improving user experience for long-running jobs. 
+- Planned for future implementation: async job queue/status endpoint for polling transcript progress and improving user experience for long-running jobs.
+
+UI/UX IMPROVEMENT LOG (2024-06-12):
+- Moved status row (spinner and status text) below the submit button for better layout and clarity.
+- Spinner now appears to the right of a cycling status text with 50 nerdy/terminal-style phrases during loading.
+- Status text defaults to 'Ready for BS scan' when idle.
+- Improved word wrapping for transcript results.
+- Added a paste button inside the input field for quick clipboard pasting.
+- Integrated full favicon suite for cross-device/browser compatibility. 

@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('transcribe-form');
   const input = document.getElementById('video-url');
+  const claimInput = document.getElementById('claim-text');
   const spinner = document.getElementById('spinner');
   const pasteBtn = document.getElementById('paste-btn');
   const statusText = document.getElementById('status-text');
@@ -98,17 +99,45 @@ document.addEventListener('DOMContentLoaded', function () {
       const res = await fetch('/api/transcribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ videoUrl: input.value })
+        body: JSON.stringify({
+          videoUrl: input.value,
+          claimText: claimInput.value
+        })
       });
       const data = await res.json();
       result = document.createElement('div');
       result.className = 'result';
+      let html = '';
       if (data.transcript) {
-        result.innerHTML = `<div class=\"transcript-title\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>`;
-      } else {
-        result.innerHTML = `<span style=\"color:#f87171;\">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
+        html += `
+          <div class="collapsible-transcript">
+            <div class="collapsible-header" tabindex="0">Transcript &#9660;</div>
+            <div class="collapsible-content" style="display:none;"><pre>${escapeHtml(data.transcript)}</pre></div>
+          </div>
+        `;
       }
+      if (data.claimCheck) {
+        html += `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Claim Check</div><pre>${escapeHtml(data.claimCheck)}</pre>`;
+      }
+      if (!data.transcript && !data.claimCheck) {
+        html = `<span style=\"color:#f87171;\">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
+      }
+      result.innerHTML = html;
       form.parentNode.appendChild(result);
+
+      // Add expand/collapse logic
+      const header = result.querySelector('.collapsible-header');
+      const content = result.querySelector('.collapsible-content');
+      if (header && content) {
+        header.addEventListener('click', function () {
+          const isOpen = content.style.display === 'block';
+          content.style.display = isOpen ? 'none' : 'block';
+          header.innerHTML = `Transcript ${isOpen ? '&#9660;' : '&#9650;'}`;
+        });
+        header.addEventListener('keypress', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') header.click();
+        });
+      }
     } catch (err) {
       result = document.createElement('div');
       result.className = 'result';
