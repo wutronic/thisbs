@@ -37,6 +37,15 @@ body.dark-bg {
   gap: 0.5rem;
   margin-bottom: 1.5rem;
 }
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.input-group .input {
+  flex: 1;
+  padding-right: 2.5rem;
+}
 .input {
   flex: 1;
   padding: 0.75rem 1rem;
@@ -90,10 +99,69 @@ body.dark-bg {
   white-space: pre-wrap;
   word-break: break-word;
   min-height: 2rem;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+}
+.result pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  background: none;
+  color: inherit;
 }
 .footer {
   margin: 2.5rem auto 1rem auto;
   text-align: center;
   color: #71717a;
   font-size: 0.9rem;
+}
+.logo {
+  display: block;
+  margin: 0 auto 1.5rem auto;
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  background: #23232a;
+}
+.paste-btn {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #a78bfa;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0 0.25rem;
+  border-radius: 6px;
+  transition: background 0.15s;
+  height: 2.2rem;
+  width: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.paste-btn:hover, .paste-btn:focus {
+  background: #23232a;
+  outline: none;
+}
+.status-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1.5rem;
+  gap: 1rem;
+}
+.status-text {
+  color: #a78bfa;
+  font-size: 1.1rem;
+  font-family: 'Fira Mono', 'Consolas', monospace;
+  letter-spacing: 0.01em;
+  min-width: 180px;
+  text-align: center;
+  transition: color 0.2s;
 }

@@ -5,18 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Video-to-Text Transcription</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png">
+  <link rel="manifest" href="/favicon_io/site.webmanifest">
+  <link rel="shortcut icon" href="/favicon_io/favicon.ico">
 </head>
 <body class="dark-bg">
   <div class="container">
-    <h1 class="title">Video-to-Text Transcription</h1>
-    <form id="transcribe-form" class="form">
-      <input type="url" id="video-url" class="input" placeholder="Paste video link here..." required />
+    <img src="/favicon.png" alt="thisbs logo" class="logo" style="display:block;margin:0 auto 1.5rem auto;width:96px;height:96px;" />
+    <h1 class="title">THIS bs, again.</h1>
+    <form id="transcribe-form" class="form" autocomplete="off">
+      <div class="input-group">
+        <input type="url" id="video-url" class="input" placeholder="Paste video link here..." required />
+        <button type="button" id="paste-btn" class="paste-btn" title="Paste from clipboard">📋</button>
+      </div>
       <button type="submit" class="button">Submit</button>
     </form>
-    <div id="spinner" class="spinner" style="display:none;"></div>
-    <div id="result" class="result"></div>
+    <div class="status-row" style="display:flex;align-items:center;justify-content:center;margin-top:1.5rem;gap:1rem;">
+      <span id="status-text" class="status-text">Ready for BS scan</span>
+      <div id="spinner" class="spinner" style="display:none;"></div>
+    </div>
   </div>
-  <footer class="footer">Inspired by Dribbble • MVP Demo</footer>
   <script src="/javascripts/main.js"></script>
 </body>
 </html>

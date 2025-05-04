@@ -2,13 +2,98 @@ document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('transcribe-form');
   const input = document.getElementById('video-url');
   const spinner = document.getElementById('spinner');
-  const result = document.getElementById('result');
+  const pasteBtn = document.getElementById('paste-btn');
+  const statusText = document.getElementById('status-text');
+  let result = null;
+  let statusInterval = null;
+
+  const statusPhrases = [
+    'Initializing BS scan...',
+    'Algorithm initialized',
+    'BS detector: booting',
+    'Loading heuristics...',
+    'Analyzing entropy...',
+    'Parsing input stream',
+    'Spinning up AI core',
+    'Allocating RAM for nonsense',
+    'Running /usr/bin/bsdetector',
+    'Checking for logical fallacies',
+    'Compiling sarcasm module',
+    'Mounting /dev/bs',
+    'Decrypting obfuscation',
+    'Piping output to /dev/null',
+    'Engaging snark protocol',
+    'Calibrating skepticism sensors',
+    'Hashing input for truthiness',
+    'Launching quantum sniffer',
+    'Evaluating semantic payload',
+    'Measuring signal-to-noise',
+    'Running sudo bsctl --scan',
+    'Checking for circular logic',
+    'Analyzing with grep -i "bs"',
+    'Spooling up neural net',
+    'Decoding jargon',
+    'Inspecting with strace',
+    'Running AI sarcasm filter',
+    'Checking for buzzwords',
+    'Measuring hype factor',
+    'Running top | grep "nonsense"',
+    'Analyzing with awk',
+    'Launching snarkd',
+    'Checking for vaporware',
+    'Running make sense',
+    'Patching logic holes',
+    'Scanning for red herrings',
+    'Running tail -f /var/log/bs',
+    'Checking for infinite loops',
+    'Running AI skepticism',
+    'Analyzing with sed',
+    'Running netstat for truth leaks',
+    'Checking for snake oil',
+    'Running AI facepalm',
+    'Analyzing with cat /dev/bs',
+    'Running AI eye-roll',
+    'Checking for quantum uncertainty',
+    'Running AI snicker',
+    'Analyzing with grep -E "truth|bs"',
+    'Running AI double-take',
+    'Finalizing scan...'
+  ];
+
+  pasteBtn.addEventListener('click', async function (e) {
+    e.preventDefault();
+    try {
+      const text = await navigator.clipboard.readText();
+      input.value = text;
+      input.focus();
+    } catch (err) {
+      alert('Could not read clipboard.');
+    }
+  });
+
+  function startStatusCycle() {
+    let idx = 0;
+    statusText.textContent = statusPhrases[0];
+    statusInterval = setInterval(() => {
+      idx = (idx + 1) % statusPhrases.length;
+      statusText.textContent = statusPhrases[idx];
+    }, 1200);
+  }
+
+  function stopStatusCycle() {
+    if (statusInterval) clearInterval(statusInterval);
+    statusText.textContent = 'Ready for BS scan';
+  }
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
-    result.textContent = '';
+    if (result) {
+      result.remove();
+      result = null;
+    }
     spinner.style.display = 'block';
-    form.querySelector('button').disabled = true;
+    startStatusCycle();
+    form.querySelector('button[type="submit"]').disabled = true;
     try {
       const res = await fetch('/api/transcribe', {
         method: 'POST',
@@ -16,20 +101,27 @@ document.addEventListener('DOMContentLoaded', function () {
         body: JSON.stringify({ videoUrl: input.value })
       });
       const data = await res.json();
+      result = document.createElement('div');
+      result.className = 'result';
       if (data.transcript) {
-        result.innerHTML = `<div class="transcript-title">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>`;
+        result.innerHTML = `<div class=\"transcript-title\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>`;
       } else {
-        result.innerHTML = `<span style="color:#f87171;">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
+        result.innerHTML = `<span style=\"color:#f87171;\">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
       }
+      form.parentNode.appendChild(result);
     } catch (err) {
-      result.innerHTML = '<span style="color:#f87171;">Network error.</span>';
+      result = document.createElement('div');
+      result.className = 'result';
+      result.innerHTML = '<span style=\"color:#f87171;\">Network error.</span>';
+      form.parentNode.appendChild(result);
     }
     spinner.style.display = 'none';
-    form.querySelector('button').disabled = false;
+    stopStatusCycle();
+    form.querySelector('button[type="submit"]').disabled = false;
   });
 
   function escapeHtml(text) {
-    return text.replace(/[&<>"']/g, function (c) {
+    return text.replace(/[&<>"]'/g, function (c) {
       return ({
         '&': '&amp;',
         '<': '&lt;',
