@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video-to-Text Transcription</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body class="dark-bg">
+  <div class="container">
+    <h1 class="title">Video-to-Text Transcription</h1>
+    <form id="transcribe-form" class="form">
+      <input type="url" id="video-url" class="input" placeholder="Paste video link here..." required />
+      <button type="submit" class="button">Submit</button>
+    </form>
+    <div id="spinner" class="spinner" style="display:none;"></div>
+    <div id="result" class="result"></div>
+  </div>
+  <footer class="footer">Inspired by Dribbble • MVP Demo</footer>
+  <script src="/javascripts/main.js"></script>
+</body>
+</html>

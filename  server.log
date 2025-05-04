@@ -1,0 +1,12 @@
+Unknown command: "start "
+
+
+Did you mean one of these?
+  npm star # Mark your favorite packages
+  npm stars # View packages marked as favorites
+  npm start # Start a package
+To see a list of supported npm commands, run:
+  npm help
+(node:71371) ExperimentalWarning: CommonJS module /Users/lukaszwieczorek/.nvm/versions/node/v23.3.0/lib/node_modules/npm/node_modules/debug/src/node.js is loading ES Module /Users/lukaszwieczorek/.nvm/versions/node/v23.3.0/lib/node_modules/npm/node_modules/supports-color/index.js using require().
+Support for loading ES Module in require() is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
