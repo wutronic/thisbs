@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function () {
       });
       console.log('Fetch completed, status:', res.status);
       const data = await res.json();
-      console.log('Data received:', data);
+      console.log('transcriptJson received:', data.transcriptJson);
       result = document.createElement('div');
       result.className = 'result';
       let html = '';
@@ -132,10 +132,10 @@ document.addEventListener('DOMContentLoaded', function () {
           </div>
         `;
       }
-      if (data.claimCheck) {
-        html += `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Claim Check</div><pre>${escapeHtml(data.claimCheck)}</pre>`;
+      if (data.transcript) {
+        html += `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>`;
       }
-      if (!data.transcriptJson && !data.claimCheck) {
+      if (!data.transcriptJson && !data.transcript) {
         html = `<span style=\"color:#f87171;\">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
       }
       result.innerHTML = html;
@@ -186,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function renderTranscriptJson(json) {
+    console.log('renderTranscriptJson input:', json);
     let html = '';
     for (const claimKey in json) {
       if (!json.hasOwnProperty(claimKey)) continue;
