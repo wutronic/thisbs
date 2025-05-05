@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const progressLabel = document.getElementById('progress-label');
   let result = null;
   let statusInterval = null;
+  let progressInterval;
 
   const statusPhrases = [
     'Initializing BS scan...',
@@ -129,12 +130,39 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     document.body.insertBefore(blackholeBg, document.body.firstChild);
     blackholeBg.style.display = 'block';
-    console.log('[Blackhole] blackholeBg displayed');
+    void blackholeBg.offsetWidth; // Force reflow
+    blackholeBg.classList.remove('fade-out');
+    blackholeBg.classList.add('fade-in');
+    console.log('[Blackhole] fade-in class added');
     window.dispatchEvent(new Event('resize'));
   }
   function hideBlackhole() {
-    blackholeBg.style.display = 'none';
+    blackholeBg.classList.remove('fade-in');
+    blackholeBg.classList.add('fade-out');
+    console.log('[Blackhole] fade-out class added');
+    blackholeBg.addEventListener('transitionend', function handler(e) {
+      if (e.propertyName === 'opacity') {
+        blackholeBg.style.display = 'none';
+        blackholeBg.removeEventListener('transitionend', handler);
+        console.log('[Blackhole] transitionend, display set to none');
+      }
+    });
     console.log('[Blackhole] blackholeBg hidden');
+  }
+
+  function startProgressBar() {
+    let step = 0;
+    setProgress(step);
+    progressInterval = setInterval(() => {
+      step++;
+      if (step < progressSteps.length - 1) {
+        setProgress(step);
+      }
+    }, 600); // Adjust timing as needed
+  }
+  function stopProgressBar() {
+    clearInterval(progressInterval);
+    setProgress(progressSteps.length - 1); // Jump to 100%
   }
 
   form.addEventListener('submit', async function (e) {
@@ -144,9 +172,7 @@ document.addEventListener('DOMContentLoaded', function () {
       result.remove();
       result = null;
     }
-    // Show black hole animation
     showBlackhole();
-    // Swap logo image for video
     if (logoImg) logoImg.style.display = 'none';
     if (logoVideo) logoVideo.style.display = 'block';
     spinner.style.display = 'block';
@@ -156,9 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
     submitBtn.disabled = true;
     submitBtn.classList.add('button-disabled');
     try {
-      setProgress(0); // Validating input
-      console.log('Sending fetch to /api/transcribe...');
-      setProgress(1); // Downloading video
+      startProgressBar();
       const res = await fetch('/api/transcribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -167,11 +191,7 @@ document.addEventListener('DOMContentLoaded', function () {
           claimText: claimInput.value
         })
       });
-      setProgress(2); // Converting audio (simulate step)
-      setTimeout(() => setProgress(3), 400); // Checking file size
-      setTimeout(() => setProgress(4), 800); // Transcribing audio
-      setTimeout(() => setProgress(5), 1200); // Analyzing transcript
-      setTimeout(() => setProgress(6), 1600); // Finalizing
+      stopProgressBar();
       console.log('Fetch completed, status:', res.status);
       const data = await res.json();
       setProgress(progressSteps.length - 1); // Ensure 100% on finish
@@ -215,6 +235,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       console.log('Result rendered and collapsible logic attached.');
     } catch (err) {
+      stopProgressBar();
       console.error('Error during fetch or render:', err);
       result = document.createElement('div');
       result.className = 'result';
@@ -226,11 +247,9 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Status cycle stopped, UI reset');
       submitBtn.disabled = false;
       submitBtn.classList.remove('button-disabled');
-      // Swap back to logo image after response
       if (logoVideo) logoVideo.style.display = 'none';
       if (logoImg) logoImg.style.display = 'block';
       setTimeout(resetProgress, 2000); // Hide progress bar after short delay
-      // Hide black hole animation
       hideBlackhole();
     }
   });
