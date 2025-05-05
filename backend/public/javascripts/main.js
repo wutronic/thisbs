@@ -124,16 +124,16 @@ document.addEventListener('DOMContentLoaded', function () {
       result = document.createElement('div');
       result.className = 'result';
       let html = '';
-      if (data.transcriptJson) {
+      if (data.transcriptJson || data.transcript) {
         html += `
           <div class="collapsible-transcript">
             <div class="collapsible-header" tabindex="0">Transcript Analysis &#9660;</div>
-            <div class="collapsible-content" style="display:none;">${renderTranscriptJson(data.transcriptJson)}</div>
+            <div class="collapsible-content" style="display:none;">
+              ${data.transcriptJson ? renderTranscriptJson(data.transcriptJson) : ''}
+              ${data.transcript ? `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>` : ''}
+            </div>
           </div>
         `;
-      }
-      if (data.transcript) {
-        html += `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>`;
       }
       if (!data.transcriptJson && !data.transcript) {
         html = `<span style=\"color:#f87171;\">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
