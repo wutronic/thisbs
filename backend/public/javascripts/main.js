@@ -155,13 +155,15 @@ document.addEventListener('DOMContentLoaded', function () {
     setProgress(step);
     progressInterval = setInterval(() => {
       step++;
-      if (step < progressSteps.length - 1) {
+      if (step < progressSteps.length - 2) { // Stop at penultimate step
         setProgress(step);
+      } else {
+        clearInterval(progressInterval);
+        setProgress(progressSteps.length - 2); // Hold at last visible step
       }
-    }, 600); // Adjust timing as needed
+    }, 600);
   }
   function stopProgressBar() {
-    clearInterval(progressInterval);
     setProgress(progressSteps.length - 1); // Jump to 100%
   }
 
@@ -208,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
         html += `
           <div class=\"collapsible-transcript\">
             <div class=\"collapsible-header\" tabindex=\"0\">Transcript &#9660;</div>
-            <div class=\"collapsible-content\" style=\"display:none;\">
+            <div class=\"collapsible-content\">
               <div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>
             </div>
           </div>
@@ -225,9 +227,14 @@ document.addEventListener('DOMContentLoaded', function () {
       const content = result.querySelector('.collapsible-content');
       if (header && content) {
         header.addEventListener('click', function () {
-          const isOpen = content.style.display === 'block';
-          content.style.display = isOpen ? 'none' : 'block';
-          header.innerHTML = `Transcript ${isOpen ? '&#9660;' : '&#9650;'}`;
+          const isOpen = content.classList.contains('expanded');
+          if (isOpen) {
+            content.classList.remove('expanded');
+            header.innerHTML = `Transcript &#9660;`;
+          } else {
+            content.classList.add('expanded');
+            header.innerHTML = `Transcript &#9650;`;
+          }
         });
         header.addEventListener('keypress', function (e) {
           if (e.key === 'Enter' || e.key === ' ') header.click();
