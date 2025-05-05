@@ -13,9 +13,11 @@
   <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@700&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/creative-black-hole.css">
 </head>
 <body class="dark-bg">
-  <div class="container">
+  <a-hole id="blackhole-bg" style="position:fixed;z-index:1;top:0;left:0;width:100vw;height:100vh;pointer-events:none;display:none;"><canvas class="js-canvas"></canvas><div class="aura"></div><div class="overlay"></div></a-hole>
+  <div class="container" style="position:relative;z-index:2;">
     <img src="/favicon.png" id="logo-img" alt="thisbs logo" class="logo" style="display:block;margin:0 auto 1.5rem auto;width:96px;height:96px;" />
     <video id="logo-video" class="logo" src="/assets/make_the_eye_look_around_and_blink_seed3217157896-mp4_1746405550999.mp4" style="display:none;margin:0 auto 1.5rem auto;width:96px;height:96px;" autoplay loop muted playsinline></video>
     <h1 class="title">THIS bs, again?</h1>
@@ -39,5 +41,6 @@
     </div>
   </div>
   <script src="/javascripts/main.js"></script>
+  <script type="module" src="/creative-black-hole.js"></script>
 </body>
 </html>

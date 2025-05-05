@@ -89,7 +89,7 @@ body.dark-bg {
   opacity: 0.92;
 }
 
-blockquote{
+blockquote, ul{
   line-height: 2em;
 }
 .button-disabled {
@@ -189,7 +189,7 @@ blocquotek{
 }
 .status-text {
   text-transform: uppercase;
-  color: #a78bfa;
+  color: #e0dced;
   font-size: .8rem;
   font-family: 'VT323', monospace;
   letter-spacing: 0.01em;
@@ -251,9 +251,11 @@ blocquotek{
 .claim-title {
   font-family: 'Ruda', Arial, sans-serif;
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 3.25rem;
   text-transform: uppercase;
   color: #9b7cec;
+  margin: 15px;
+  text-align: center;
 }
 .progress-container {
   width: 100%;
@@ -265,6 +267,7 @@ blocquotek{
   position: relative;
   overflow: hidden;
 }
+
 .progress-bar {
   height: 100%;
   width: 0%;
@@ -288,4 +291,14 @@ blocquotek{
   justify-content: center;
   pointer-events: none;
   text-shadow: 0 1px 4px #000a;
+}
+
+.position-block {
+  border-radius: 29px;
+  background-color: #1c1b23;
+  padding: 43px;
+}
+
+#blackhole-wrapper, #blackhole-bg {
+  /* styles removed for fullscreen */
 }

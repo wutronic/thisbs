@@ -119,6 +119,24 @@ document.addEventListener('DOMContentLoaded', function () {
     statusText.textContent = 'Ready for BS scan';
   }
 
+  // Helper to show/hide black hole animation
+  const blackholeBg = document.getElementById('blackhole-bg');
+  function showBlackhole() {
+    console.log('[Blackhole] showBlackhole called');
+    // Remove and re-add the element to force re-initialization
+    if (blackholeBg.parentNode) {
+      blackholeBg.parentNode.removeChild(blackholeBg);
+    }
+    document.body.insertBefore(blackholeBg, document.body.firstChild);
+    blackholeBg.style.display = 'block';
+    console.log('[Blackhole] blackholeBg displayed');
+    window.dispatchEvent(new Event('resize'));
+  }
+  function hideBlackhole() {
+    blackholeBg.style.display = 'none';
+    console.log('[Blackhole] blackholeBg hidden');
+  }
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     console.log('Submitting form...');
@@ -126,6 +144,8 @@ document.addEventListener('DOMContentLoaded', function () {
       result.remove();
       result = null;
     }
+    // Show black hole animation
+    showBlackhole();
     // Swap logo image for video
     if (logoImg) logoImg.style.display = 'none';
     if (logoVideo) logoVideo.style.display = 'block';
@@ -148,7 +168,6 @@ document.addEventListener('DOMContentLoaded', function () {
         })
       });
       setProgress(2); // Converting audio (simulate step)
-      // Simulate progress for demo: you can refine with backend events in future
       setTimeout(() => setProgress(3), 400); // Checking file size
       setTimeout(() => setProgress(4), 800); // Transcribing audio
       setTimeout(() => setProgress(5), 1200); // Analyzing transcript
@@ -211,6 +230,8 @@ document.addEventListener('DOMContentLoaded', function () {
       if (logoVideo) logoVideo.style.display = 'none';
       if (logoImg) logoImg.style.display = 'block';
       setTimeout(resetProgress, 2000); // Hide progress bar after short delay
+      // Hide black hole animation
+      hideBlackhole();
     }
   });
 
@@ -235,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function () {
       html += `<div class=\"claim-block\"><div class=\"claim-title\"><b>${escapeHtml(claimKey.replace(/_/g, ' '))}</b></div>`;
       if (Array.isArray(claim.positions)) {
         claim.positions.forEach(pos => {
-          html += `<div class=\"position-block\" style=\"margin-left:1em;margin-bottom:1em;\">`;
+          html += `<div class=\"position-block\" style=\"margin-left:1em;margin-bottom:2em;\">`;
           html += `<div class=\"position-label\"><b>${escapeHtml(pos.label)}</b></div>`;
           html += `<blockquote class=\"steelman\">${escapeHtml(pos.steelman)}</blockquote>`;
           if (Array.isArray(pos.top_sources)) {
