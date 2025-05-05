@@ -15,7 +15,7 @@ body.dark-bg {
   margin: 0;
 }
 .container {
-  max-width: 420px;
+  max-width: 725px;
   margin: 60px auto 0 auto;
   /* background: #23232a; */
   /* border-radius: 18px; */
@@ -25,11 +25,19 @@ body.dark-bg {
   flex-direction: column;
   align-items: center;
 }
+.claimtitle{
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  color: #c0c8d8;
+}
 .title {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1.5rem;
   text-align: center;
+  font-family: 'Ruda', Arial, sans-serif;
 }
 .form {
   width: 100%;
@@ -80,6 +88,10 @@ body.dark-bg {
 .button:hover {
   opacity: 0.92;
 }
+
+blockquote{
+  line-height: 2em;
+}
 .button-disabled {
   background: #44444a !important;
   color: #bdbdbd !important;
@@ -114,7 +126,12 @@ body.dark-bg {
   min-height: 2rem;
   overflow-wrap: break-word;
   overflow-x: auto;
+  font-family: 'Quattrocento', Georgia, serif;
 }
+blocquotek{
+  line-height: 1.5em;
+}
+
 .result pre {
   white-space: pre-wrap;
   word-break: break-word;
@@ -124,6 +141,7 @@ body.dark-bg {
   font-size: inherit;
   background: none;
   color: inherit;
+  font-family: 'Quattrocento', Georgia, serif;
 }
 .footer {
   margin: 2.5rem auto 1rem auto;
@@ -229,4 +247,45 @@ body.dark-bg {
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+.claim-title {
+  font-family: 'Ruda', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  color: #9b7cec;
+}
+.progress-container {
+  width: 100%;
+  margin: 1.5rem 0 0 0;
+  background: #23232a;
+  border-radius: 10px;
+  box-shadow: 0 1px 8px 0 #0002;
+  height: 28px;
+  position: relative;
+  overflow: hidden;
+}
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #a78bfa 0%, #6366f1 100%);
+  border-radius: 10px 0 0 10px;
+  transition: width 0.6s cubic-bezier(.4,2,.3,1), background 0.3s;
+  box-shadow: 0 2px 8px 0 #a78bfa44;
+}
+.progress-label {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 100%;
+  transform: translateX(-50%);
+  color: #fff;
+  font-family: 'Ruda', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  text-shadow: 0 1px 4px #000a;
 }

@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const statusText = document.getElementById('status-text');
   const logoImg = document.getElementById('logo-img');
   const logoVideo = document.getElementById('logo-video');
+  const progressContainer = document.getElementById('progress-container');
+  const progressBar = document.getElementById('progress-bar');
+  const progressLabel = document.getElementById('progress-label');
   let result = null;
   let statusInterval = null;
 
@@ -63,6 +66,30 @@ document.addEventListener('DOMContentLoaded', function () {
     'Finalizing scan...'
   ];
 
+  // Scalable progress steps array
+  const progressSteps = [
+    'Validating input',
+    'Downloading video',
+    'Converting audio',
+    'Checking file size',
+    'Transcribing audio',
+    'Analyzing transcript',
+    'Finalizing'
+  ];
+
+  function setProgress(stepIndex) {
+    const percent = Math.round((stepIndex / (progressSteps.length - 1)) * 100);
+    progressBar.style.width = percent + '%';
+    progressLabel.textContent = progressSteps[stepIndex] || '';
+    progressContainer.style.display = 'block';
+  }
+
+  function resetProgress() {
+    progressBar.style.width = '0%';
+    progressLabel.textContent = '';
+    progressContainer.style.display = 'none';
+  }
+
   pasteBtn.addEventListener('click', async function (e) {
     e.preventDefault();
     try {
@@ -109,7 +136,9 @@ document.addEventListener('DOMContentLoaded', function () {
     submitBtn.disabled = true;
     submitBtn.classList.add('button-disabled');
     try {
+      setProgress(0); // Validating input
       console.log('Sending fetch to /api/transcribe...');
+      setProgress(1); // Downloading video
       const res = await fetch('/api/transcribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -118,19 +147,30 @@ document.addEventListener('DOMContentLoaded', function () {
           claimText: claimInput.value
         })
       });
+      setProgress(2); // Converting audio (simulate step)
+      // Simulate progress for demo: you can refine with backend events in future
+      setTimeout(() => setProgress(3), 400); // Checking file size
+      setTimeout(() => setProgress(4), 800); // Transcribing audio
+      setTimeout(() => setProgress(5), 1200); // Analyzing transcript
+      setTimeout(() => setProgress(6), 1600); // Finalizing
       console.log('Fetch completed, status:', res.status);
       const data = await res.json();
+      setProgress(progressSteps.length - 1); // Ensure 100% on finish
       console.log('transcriptJson received:', data.transcriptJson);
       result = document.createElement('div');
       result.className = 'result';
       let html = '';
-      if (data.transcriptJson || data.transcript) {
+      // Render analysis above the collapsible if present
+      if (data.transcriptJson) {
+        html += renderTranscriptJson(data.transcriptJson);
+      }
+      // Collapsible contains only the transcript
+      if (data.transcript) {
         html += `
-          <div class="collapsible-transcript">
-            <div class="collapsible-header" tabindex="0">Transcript Analysis &#9660;</div>
-            <div class="collapsible-content" style="display:none;">
-              ${data.transcriptJson ? renderTranscriptJson(data.transcriptJson) : ''}
-              ${data.transcript ? `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>` : ''}
+          <div class=\"collapsible-transcript\">
+            <div class=\"collapsible-header\" tabindex=\"0\">Transcript &#9660;</div>
+            <div class=\"collapsible-content\" style=\"display:none;\">
+              <div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Transcript</div><pre>${escapeHtml(data.transcript)}</pre>
             </div>
           </div>
         `;
@@ -148,7 +188,7 @@ document.addEventListener('DOMContentLoaded', function () {
         header.addEventListener('click', function () {
           const isOpen = content.style.display === 'block';
           content.style.display = isOpen ? 'none' : 'block';
-          header.innerHTML = `Transcript Analysis ${isOpen ? '&#9660;' : '&#9650;'}`;
+          header.innerHTML = `Transcript ${isOpen ? '&#9660;' : '&#9650;'}`;
         });
         header.addEventListener('keypress', function (e) {
           if (e.key === 'Enter' || e.key === ' ') header.click();
@@ -170,6 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
       // Swap back to logo image after response
       if (logoVideo) logoVideo.style.display = 'none';
       if (logoImg) logoImg.style.display = 'block';
+      setTimeout(resetProgress, 2000); // Hide progress bar after short delay
     }
   });
 
