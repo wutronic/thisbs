@@ -187,6 +187,7 @@ body.dark-bg {
 }
 .claim-group .input {
   width: 100%;
+  margin-top: -11px;
 }
 .collapsible-transcript {
   margin-top: 1.5rem;

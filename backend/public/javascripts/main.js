@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const spinner = document.getElementById('spinner');
   const pasteBtn = document.getElementById('paste-btn');
   const statusText = document.getElementById('status-text');
+  const logoImg = document.getElementById('logo-img');
+  const logoVideo = document.getElementById('logo-video');
   let result = null;
   let statusInterval = null;
 
@@ -97,6 +99,9 @@ document.addEventListener('DOMContentLoaded', function () {
       result.remove();
       result = null;
     }
+    // Swap logo image for video
+    if (logoImg) logoImg.style.display = 'none';
+    if (logoVideo) logoVideo.style.display = 'block';
     spinner.style.display = 'block';
     startStatusCycle();
     console.log('Status cycle started');
@@ -162,6 +167,9 @@ document.addEventListener('DOMContentLoaded', function () {
       console.log('Status cycle stopped, UI reset');
       submitBtn.disabled = false;
       submitBtn.classList.remove('button-disabled');
+      // Swap back to logo image after response
+      if (logoVideo) logoVideo.style.display = 'none';
+      if (logoImg) logoImg.style.display = 'block';
     }
   });
 

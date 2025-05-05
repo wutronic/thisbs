@@ -14,17 +14,18 @@
 </head>
 <body class="dark-bg">
   <div class="container">
-    <img src="/favicon.png" alt="thisbs logo" class="logo" style="display:block;margin:0 auto 1.5rem auto;width:96px;height:96px;" />
+    <img src="/favicon.png" id="logo-img" alt="thisbs logo" class="logo" style="display:block;margin:0 auto 1.5rem auto;width:96px;height:96px;" />
+    <video id="logo-video" class="logo" src="/assets/make_the_eye_look_around_and_blink_seed3217157896-mp4_1746405550999.mp4" style="display:none;margin:0 auto 1.5rem auto;width:96px;height:96px;" autoplay loop muted playsinline></video>
     <h1 class="title">THIS bs, again?</h1>
     <form id="transcribe-form" class="form" autocomplete="off">
       <div class="input-group">
         <input type="url" id="video-url" class="input" placeholder="Paste video link here..." required />
         <button type="button" id="paste-btn" class="paste-btn" title="Paste from clipboard">📋</button>
       </div>
-      <button type="submit" class="button">Submit</button>
       <div class="claim-group">
         <input type="text" id="claim-text" class="input" placeholder="Check this specific claim (optional)" />
       </div>
+      <button type="submit" class="button">Submit</button>
     </form>
     <div class="status-row" style="display:flex;align-items:center;justify-content:center;margin-top:2rem;gap:1rem;">
       <div id="spinner" class="spinner" style="display:none;"></div>

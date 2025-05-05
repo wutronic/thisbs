@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const os = require('os');
 const { downloadVideo } = require('../videoDownloader');
-const { convertToWav } = require('../audioConverter');
+const { convertToMp3 } = require('../audioConverter');
 const { transcribeAudio } = require('../whisperClient');
 const OpenAI = require('openai');
 require('dotenv').config();
@@ -21,27 +21,33 @@ router.post('/', async (req, res) => {
   }
   console.log('DEBUG: Input validation passed. videoUrl:', videoUrl, 'claimText:', claimText);
   const tempDir = os.tmpdir();
-  let videoPath, wavPath;
+  let videoPath, mp3Path;
   try {
     console.log('DEBUG: Starting video download...');
     videoPath = await downloadVideo(videoUrl, tempDir);
     console.log('DEBUG: Video downloaded:', videoPath);
-    console.log('DEBUG: Starting audio conversion...');
-    wavPath = await convertToWav(videoPath, tempDir);
-    console.log('DEBUG: Audio converted:', wavPath);
+    console.log('DEBUG: Starting audio conversion to MP3...');
+    mp3Path = await convertToMp3(videoPath, tempDir);
+    console.log('DEBUG: Audio converted to MP3:', mp3Path);
+    // File size check (25MB limit)
+    const stats = fs.statSync(mp3Path);
+    if (stats.size > 25 * 1024 * 1024) {
+      console.log('DEBUG: MP3 file too large:', stats.size);
+      return res.status(400).json({ error: 'audio too long, we appologize, if you donate or subscribe we can get resources to fix this, thank you for your patience.' });
+    }
     console.log('DEBUG: Starting transcription...');
-    const transcript = await transcribeAudio(wavPath);
+    const transcript = await transcribeAudio(mp3Path);
     console.log('DEBUG: Transcription complete. Transcript length:', transcript.length);
 
     // New: Analyze transcript with OpenAI and get JSON structure
     let transcriptJson = null;
-    const analysisPrompt = `You are an expert analyst trained in dialectics and source evaluation. Your job is to listen to or read claims made in a video and create the strongest, most persuasive ("steelman") versions of each major position. For each claim made, follow these steps:\n\t1.\tIdentify distinct positions or interpretations of the claim. If there is only one, say so explicitly.\n\t2.\tFor each position, construct the strongest, most logical version of the argument (steelman it).\n\t3.\tIdentify and list the top 3 most trusted and relevant sources or figures that might best represent each position.\n\t4.\tOutput the result in strict JSON format. No extra commentary. No prose.\n\nOutput JSON structure (always follow this exactly):\n\n{\n  "claim_1": {\n    "positions": [\n      {\n        "label": "Position 1",\n        "steelman": "Strongest possible version of the first viewpoint.",\n        "top_sources": ["Source A", "Source B", "Source C"]\n      },\n      {\n        "label": "Position 2",\n        "steelman": "Strongest possible version of the second viewpoint.",\n        "top_sources": ["Source D", "Source E", "Source F"]\n      }\n    ]\n  },\n  "claim_2": {\n    "positions": [\n      {\n        "label": "Only Position",\n        "steelman": "Best articulation of the single known position.",\n        "top_sources": ["Source X", "Source Y", "Source Z"]\n      }\n    ]\n  }\n}\n\nAnalyze the following transcript and output only the JSON:`;
+    const analysisPrompt = `You are an expert analyst trained in dialectics and source evaluation. Your job is to listen to or read claims made in a video and create the strongest, most persuasive ("steelman") versions of each major position. make sure you go in depth and at least 2 paragraphs per claim. For each claim made, follow these steps:\n\t1.\tIdentify distinct positions or interpretations of the claim. .\n\t2.\tFor each position, construct the strongest, most logical version of the argument (steelman it), before going into the argument use this format for the text "The Claim you intend to expand on"\n "claim argument" ".\n\t3.\tIdentify and list the top 3 most trusted and relevant sources or figures that might best represent each position. Make sure you go into detail on each claim, find their main positions and write at least 2 paragraps or more if necessary to explain.\n\t4.\tOutput the result in strict JSON format. No extra commentary. No prose. \n\nOutput JSON structure (always follow this exactly):\n\n{\n  "claim_1": {\n    "positions": [\n      {\n        "label": "Position 1",\n        "steelman": "Strongest possible version of the first viewpoint.",\n        "top_sources": ["Source A", "Source B", "Source C"]\n      },\n      {\n        "label": "Position 2",\n        "steelman": "Strongest possible version of the second viewpoint.",\n        "top_sources": ["Source D", "Source E", "Source F"]\n      }\n    ]\n  },\n  "claim_2": {\n    "positions": [\n      {\n        "label": "Only Position",\n        "steelman": "Best articulation of the single known position.",\n        "top_sources": ["Source X", "Source Y", "Source Z"]\n      }\n    ]\n  }\n}\n\nAnalyze the following transcript and output only the JSON:`;
     try {
       console.log('DEBUG: Starting OpenAI analysis call...');
       const analysisResponse = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [
-          { role: 'user', content: analysisPrompt + '\n\n' + transcript }
+          { role: 'user', content: analysisPrompt + '\n\n Constraints: Only respond to this specific claim in the followingtranscript \n\n ' + transcript }
         ]
       });
       // Log the raw response for debugging
@@ -89,7 +95,7 @@ router.post('/', async (req, res) => {
     res.status(500).json({ error: err.message || 'Transcription failed.' });
   } finally {
     if (videoPath && fs.existsSync(videoPath)) fs.unlinkSync(videoPath);
-    if (wavPath && fs.existsSync(wavPath)) fs.unlinkSync(wavPath);
+    if (mp3Path && fs.existsSync(mp3Path)) fs.unlinkSync(mp3Path);
   }
 });
 
