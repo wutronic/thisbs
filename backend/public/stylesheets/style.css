@@ -61,8 +61,8 @@ body.dark-bg {
   box-sizing: border-box;
   padding: 0.75rem 1rem;
   border-radius: 12px;
-  border: 1px solid #3f3f46;
-  background: #18181b;
+  border: 1px solid #1d1d21;
+  background: #101010;
   color: #f3f4f6;
   font-size: 1rem;
   outline: none;
@@ -152,7 +152,6 @@ blockquote, ul{
   margin-top: 1rem;
   font-size: 1rem;
   color: #f3f4f6;
-  white-space: pre-wrap;
   word-break: break-word;
   min-height: 2rem;
   overflow-wrap: break-word;
@@ -241,7 +240,6 @@ blocquotek{
 .collapsible-transcript {
   margin-top: 1.5rem;
   border-radius: 10px;
-  background: #23232a;
   box-shadow: 0 1px 8px 0 #0002;
   overflow: hidden;
 }
@@ -251,7 +249,7 @@ blocquotek{
   color: #a78bfa;
   font-family: 'VT323', monospace;
   font-size: 1.1rem;
-  padding: 0.75rem 1rem;
+  padding: 0.75rem 0rem
   border: none;
   outline: none;
   user-select: none;
@@ -259,15 +257,15 @@ blocquotek{
   align-items: center;
   justify-content: space-between;
   transition: background 0.2s;
+  margin-top: 20px;
+  
 }
 .collapsible-header:focus {
-  background: #2d2d37;
+ 
 }
 .collapsible-content {
-  padding: 1rem;
   background: #18181b;
   color: #f3f4f6;
-  border-top: 1px solid #3f3f46;
 }
 .collapsible-content pre {
   margin: 0;
@@ -278,6 +276,7 @@ blocquotek{
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
+  line-height: 2em;
 }
 .claim-title {
   font-family: 'Ruda', Arial, sans-serif;
@@ -347,8 +346,13 @@ blocquotek{
   transition: opacity 3.4s cubic-bezier(.4,2,.3,1);
 }
 #blackhole-bg.fade-in {
-  opacity: 1;
+  opacity: .2;
 }
 #blackhole-bg.fade-out {
   opacity: 0;
+}
+.position-label{
+  font-size: 2em;
+  margin: 10px 0 25px;
+  text-align: center;
 }
