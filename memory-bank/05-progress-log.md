@@ -111,4 +111,13 @@ FRONTEND TRANSCRIPT/ANALYSIS UI UPDATE LOG (2024-06-13):
 - The collapsible box (now labeled "Transcript") contains only the transcript text.
 - This improves clarity: users see the analysis summary and sources immediately, and can expand to view the full transcript.
 - All changes committed and pushed to GitHub for traceability.
-- Debug logging was added and then removed as needed during troubleshooting. 
+- Debug logging was added and then removed as needed during troubleshooting.
+
+CREATIVE-BLACK-HOLE ANIMATION INTEGRATION LOG (2024-06-13):
+- Integrated the creative-black-hole animation as a full-page background overlay during processing (after form submit, before API response).
+- Added <a-hole> custom element to index.html, hidden by default and styled to cover the viewport.
+- Initially attempted dynamic import of creative-black-hole.js, but switched to static <script type="module"> import for reliability and to ensure custom element registration on page load.
+- Debugged canvas sizing issues: animation was initializing with zero size when hidden, causing OffscreenCanvas errors.
+- Final solution: on show, remove and re-add the <a-hole> element to the DOM before setting display:block, forcing correct initialization and canvas sizing.
+- Progress bar, status text, and all UI elements remain visible above the animation.
+- All changes tested and confirmed working; logs and error handling improved for future debugging. 
