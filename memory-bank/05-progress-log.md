@@ -102,4 +102,13 @@ UI/UX IMPROVEMENT LOG (2024-06-12):
 - Status text defaults to 'Ready for BS scan' when idle.
 - Improved word wrapping for transcript results.
 - Added a paste button inside the input field for quick clipboard pasting.
-- Integrated full favicon suite for cross-device/browser compatibility. 
+- Integrated full favicon suite for cross-device/browser compatibility.
+
+FRONTEND TRANSCRIPT/ANALYSIS UI UPDATE LOG (2024-06-13):
+- Updated frontend result rendering logic in backend/public/javascripts/main.js.
+- Transcript and analysis are no longer rendered together inside the collapsible box.
+- Now, the analysis (from transcriptJson) is rendered as a visible block above the collapsible.
+- The collapsible box (now labeled "Transcript") contains only the transcript text.
+- This improves clarity: users see the analysis summary and sources immediately, and can expand to view the full transcript.
+- All changes committed and pushed to GitHub for traceability.
+- Debug logging was added and then removed as needed during troubleshooting. 
