@@ -79,23 +79,32 @@ document.addEventListener('DOMContentLoaded', function () {
       idx = (idx + 1) % statusPhrases.length;
       statusText.textContent = statusPhrases[idx];
     }, 1200);
+    console.log('startStatusCycle: interval started');
   }
 
   function stopStatusCycle() {
-    if (statusInterval) clearInterval(statusInterval);
+    if (statusInterval) {
+      clearInterval(statusInterval);
+      console.log('stopStatusCycle: interval cleared');
+    }
     statusText.textContent = 'Ready for BS scan';
   }
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
+    console.log('Submitting form...');
     if (result) {
       result.remove();
       result = null;
     }
     spinner.style.display = 'block';
     startStatusCycle();
-    form.querySelector('button[type="submit"]').disabled = true;
+    console.log('Status cycle started');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.classList.add('button-disabled');
     try {
+      console.log('Sending fetch to /api/transcribe...');
       const res = await fetch('/api/transcribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -104,22 +113,24 @@ document.addEventListener('DOMContentLoaded', function () {
           claimText: claimInput.value
         })
       });
+      console.log('Fetch completed, status:', res.status);
       const data = await res.json();
+      console.log('Data received:', data);
       result = document.createElement('div');
       result.className = 'result';
       let html = '';
-      if (data.transcript) {
+      if (data.transcriptJson) {
         html += `
           <div class="collapsible-transcript">
-            <div class="collapsible-header" tabindex="0">Transcript &#9660;</div>
-            <div class="collapsible-content" style="display:none;"><pre>${escapeHtml(data.transcript)}</pre></div>
+            <div class="collapsible-header" tabindex="0">Transcript Analysis &#9660;</div>
+            <div class="collapsible-content" style="display:none;">${renderTranscriptJson(data.transcriptJson)}</div>
           </div>
         `;
       }
       if (data.claimCheck) {
         html += `<div class=\"transcript-title\" style=\"margin-top:1.5rem;\">Claim Check</div><pre>${escapeHtml(data.claimCheck)}</pre>`;
       }
-      if (!data.transcript && !data.claimCheck) {
+      if (!data.transcriptJson && !data.claimCheck) {
         html = `<span style=\"color:#f87171;\">${escapeHtml(data.error || 'Transcription failed.')}</span>`;
       }
       result.innerHTML = html;
@@ -132,21 +143,26 @@ document.addEventListener('DOMContentLoaded', function () {
         header.addEventListener('click', function () {
           const isOpen = content.style.display === 'block';
           content.style.display = isOpen ? 'none' : 'block';
-          header.innerHTML = `Transcript ${isOpen ? '&#9660;' : '&#9650;'}`;
+          header.innerHTML = `Transcript Analysis ${isOpen ? '&#9660;' : '&#9650;'}`;
         });
         header.addEventListener('keypress', function (e) {
           if (e.key === 'Enter' || e.key === ' ') header.click();
         });
       }
+      console.log('Result rendered and collapsible logic attached.');
     } catch (err) {
+      console.error('Error during fetch or render:', err);
       result = document.createElement('div');
       result.className = 'result';
       result.innerHTML = '<span style=\"color:#f87171;\">Network error.</span>';
       form.parentNode.appendChild(result);
+    } finally {
+      spinner.style.display = 'none';
+      stopStatusCycle();
+      console.log('Status cycle stopped, UI reset');
+      submitBtn.disabled = false;
+      submitBtn.classList.remove('button-disabled');
     }
-    spinner.style.display = 'none';
-    stopStatusCycle();
-    form.querySelector('button[type="submit"]').disabled = false;
   });
 
   function escapeHtml(text) {
@@ -159,5 +175,31 @@ document.addEventListener('DOMContentLoaded', function () {
         "'": '&#39;'
       })[c];
     });
+  }
+
+  function renderTranscriptJson(json) {
+    let html = '';
+    for (const claimKey in json) {
+      if (!json.hasOwnProperty(claimKey)) continue;
+      const claim = json[claimKey];
+      html += `<div class=\"claim-block\"><div class=\"claim-title\"><b>${escapeHtml(claimKey.replace(/_/g, ' '))}</b></div>`;
+      if (Array.isArray(claim.positions)) {
+        claim.positions.forEach(pos => {
+          html += `<div class=\"position-block\" style=\"margin-left:1em;margin-bottom:1em;\">`;
+          html += `<div class=\"position-label\"><b>${escapeHtml(pos.label)}</b></div>`;
+          html += `<blockquote class=\"steelman\">${escapeHtml(pos.steelman)}</blockquote>`;
+          if (Array.isArray(pos.top_sources)) {
+            html += '<div class=\"sources-title\">Top Sources:</div><ul class=\"sources-list\">';
+            pos.top_sources.forEach(src => {
+              html += `<li>${escapeHtml(src)}</li>`;
+            });
+            html += '</ul>';
+          }
+          html += `</div>`;
+        });
+      }
+      html += `</div>`;
+    }
+    return html;
   }
 }); 
