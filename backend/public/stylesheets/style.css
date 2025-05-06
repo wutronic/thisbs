@@ -224,7 +224,7 @@ blocquotek{
 .status-text {
   text-transform: uppercase;
   color: #e0dced;
-  font-size: .8rem;
+  font-size: .9rem;
   font-family: 'VT323', monospace;
   letter-spacing: 0.01em;
   min-width: 90px;
@@ -233,19 +233,39 @@ blocquotek{
   letter-spacing: 7px;
 }
 .claim-group {
-  margin-top: 1.25rem;
-  display: block;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.7s cubic-bezier(0.4,0,0.2,1), opacity 0.5s cubic-bezier(0.4,0,0.2,1);
+  will-change: max-height, opacity;
+  margin-top: 0;
+}
+.claim-group.expanded {
+  max-height: 100px;
+  opacity: 1;
+}
+.js-hide {
+  opacity: 0 !important;
+  max-height: 0 !important;
 }
 .claim-group .input {
   width: 100%;
-  margin-top: -11px;
 }
 .collapsible-transcript {
   margin-top: 1.5rem;
   border-radius: 10px;
   box-shadow: 0 1px 8px 0 #0002;
   overflow: hidden;
+  width: 74%;
+  margin-left: auto;
+  margin-right: auto;
 }
+
+.transcript-title {
+  font-size: 3em;
+  margin-bottom: 30px;
+}
+
 .collapsible-header {
   cursor: pointer;
   background: #18181b;
@@ -313,7 +333,10 @@ blocquotek{
   transition: width 0.6s cubic-bezier(.4,2,.3,1), background 0.3s;
   box-shadow: 0 2px 8px 0 #a78bfa44;
 }
+
+/* just hiding for now, can fix later */
 .progress-label {
+  display: none;
   position: absolute;
   left: 50%;
   top: 0;

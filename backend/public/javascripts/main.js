@@ -12,6 +12,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const progressLabel = document.getElementById('progress-label');
   const settingsBtn = document.getElementById('settings-btn');
   const claimGroup = document.querySelector('.claim-group');
+  if (claimGroup) {
+    claimGroup.classList.remove('js-hide');
+  }
   let result = null;
   let statusInterval = null;
   let progressInterval;
