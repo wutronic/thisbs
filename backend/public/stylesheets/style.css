@@ -1,4 +1,19 @@
+:root {
+  --background: #18181b;
+  --foreground: #f3f4f6;
+  --button-bg: #18181b;
+  --button-fg: #fff;
+  --rainbow-vibrance: 50%;
+}
+body.light-mode {
+  --background: #f3f4f6;
+  --foreground: #18181b;
+  --button-bg: #fff;
+  --button-fg: #18181b;
+}
 body {
+  background: var(--background);
+  color: var(--foreground);
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -451,5 +466,33 @@ blocquotek{
 
 .settings-btn:hover svg .st0 {
   fill: #a78bfa;
+}
+
+.rainbow-btn {
+  background: var(--button-bg);
+  color: var(--button-fg);
+  font-size: 1.25rem;
+  padding: 1.25rem 2.5rem;
+  border-radius: 1000px;
+  border: none;
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+  transition: background 0.2s, color 0.2s;
+}
+.rainbow-btn::before {
+  --vibrance: var(--rainbow-vibrance);
+  content: " ";
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, #ff3d77, #ffa63d, #338aff, #3cf0c5, #ff3d77);
+  filter: blur(18px);
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.rainbow-btn:hover::before {
+  opacity: 1;
 }
 

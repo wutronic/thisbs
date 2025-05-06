@@ -313,4 +313,28 @@ document.addEventListener('DOMContentLoaded', function () {
       claimGroup.classList.toggle('expanded');
     });
   }
+
+  // Theme toggle logic
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+  function setTheme(mode) {
+    if (mode === 'light') {
+      body.classList.add('light-mode');
+      themeToggle.textContent = '☀️';
+    } else {
+      body.classList.remove('light-mode');
+      themeToggle.textContent = '🌙';
+    }
+    localStorage.setItem('theme', mode);
+  }
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function () {
+      const isLight = body.classList.toggle('light-mode');
+      setTheme(isLight ? 'light' : 'dark');
+    });
+    // On load, set theme from localStorage
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light') setTheme('light');
+    else setTheme('dark');
+  }
 }); 
