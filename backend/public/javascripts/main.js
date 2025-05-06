@@ -307,11 +307,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   if (settingsBtn && claimGroup) {
     settingsBtn.addEventListener('click', function () {
-      if (claimGroup.style.display === 'none' || claimGroup.style.display === '') {
-        claimGroup.style.display = 'block';
-      } else {
-        claimGroup.style.display = 'none';
-      }
+      claimGroup.classList.toggle('expanded');
     });
   }
 }); 
