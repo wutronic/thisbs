@@ -192,7 +192,7 @@ blocquotek{
 }
 .paste-btn {
   position: absolute;
-  right: 3rem;
+  right: 5rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -421,8 +421,9 @@ blocquotek{
 }
 
 .settings-btn {
-color: #fff;
-padding: 0 1.25rem;
+  padding: 0 1.25rem;
+  background: none;
+  border: none;
 }
 
 .settings-btn:hover svg .st0 {
