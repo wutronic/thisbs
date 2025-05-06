@@ -88,8 +88,8 @@ router.post('/', async (req, res) => {
     }
 
     // Log for debugging
-    console.log('DEBUG: Final API response:', { transcriptJson, claimCheck });
-    res.json({ transcriptJson, claimCheck });
+    console.log('DEBUG: Final API response:', { transcript, transcriptJson, claimCheck });
+    res.json({ transcript, transcriptJson, claimCheck });
   } catch (err) {
     console.log('DEBUG: Error in main handler:', err);
     res.status(500).json({ error: err.message || 'Transcription failed.' });
