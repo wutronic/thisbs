@@ -64,9 +64,16 @@ body.dark-bg {
   font-size: 1rem;
   outline: none;
   transition: border 0.2s;
+  height: 64px;
+  padding-left: 26px;
 }
 .input:focus {
   border: 1.5px solid #a78bfa;
+}
+
+input {
+  height: 64px;
+  padding-left: 26px;
 }
 .button-wrapper {
   position: relative;
@@ -185,7 +192,7 @@ blocquotek{
 }
 .paste-btn {
   position: absolute;
-  right: 0.5rem;
+  right: 3rem;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -201,6 +208,7 @@ blocquotek{
   display: flex;
   align-items: center;
   justify-content: center;
+  
 }
 .paste-btn:hover, .paste-btn:focus {
   background: #23232a;
@@ -411,3 +419,13 @@ blocquotek{
     column-count: 1 !important;
   }
 }
+
+.settings-btn {
+color: #fff;
+padding: 0 1.25rem;
+}
+
+.settings-btn:hover svg .st0 {
+  fill: #a78bfa;
+}
+

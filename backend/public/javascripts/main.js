@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
   const progressContainer = document.getElementById('progress-container');
   const progressBar = document.getElementById('progress-bar');
   const progressLabel = document.getElementById('progress-label');
+  const settingsBtn = document.getElementById('settings-btn');
+  const claimGroup = document.querySelector('.claim-group');
   let result = null;
   let statusInterval = null;
   let progressInterval;
@@ -301,5 +303,15 @@ document.addEventListener('DOMContentLoaded', function () {
       html += `<div class=\"claim-blocks-wrapper\">${blocksHtml}</div>`;
     }
     return html;
+  }
+
+  if (settingsBtn && claimGroup) {
+    settingsBtn.addEventListener('click', function () {
+      if (claimGroup.style.display === 'none' || claimGroup.style.display === '') {
+        claimGroup.style.display = 'block';
+      } else {
+        claimGroup.style.display = 'none';
+      }
+    });
   }
 }); 
