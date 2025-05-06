@@ -279,23 +279,26 @@ document.addEventListener('DOMContentLoaded', function () {
     for (const claimKey in json) {
       if (!json.hasOwnProperty(claimKey)) continue;
       const claim = json[claimKey];
-      html += `<div class=\"claim-block\"><div class=\"claim-title\"><b>${escapeHtml(claimKey.replace(/_/g, ' '))}</b></div>`;
+      html += `<div class=\"claim-title\"><b>${escapeHtml(claimKey.replace(/_/g, ' '))}</b></div>`;
+      let blocksHtml = '';
       if (Array.isArray(claim.positions)) {
         claim.positions.forEach(pos => {
-          html += `<div class=\"position-block\" style=\"margin-left:1em;margin-bottom:2em;\">`;
-          html += `<div class=\"position-label\"><b>${escapeHtml(pos.label)}</b></div>`;
-          html += `<blockquote class=\"steelman\">${escapeHtml(pos.steelman)}</blockquote>`;
+          blocksHtml += `<div class=\"claim-block\">`;
+          blocksHtml += `<div class=\"position-block\" style=\"margin-left:1em;margin-bottom:2em;\">`;
+          blocksHtml += `<div class=\"position-label\"><b>${escapeHtml(pos.label)}</b></div>`;
+          blocksHtml += `<blockquote class=\"steelman\">${escapeHtml(pos.steelman)}</blockquote>`;
           if (Array.isArray(pos.top_sources)) {
-            html += '<div class=\"sources-title\">Top Sources:</div><ul class=\"sources-list\">';
+            blocksHtml += '<div class=\"sources-title\">Top Sources:</div><ul class=\"sources-list\">';
             pos.top_sources.forEach(src => {
-              html += `<li>${escapeHtml(src)}</li>`;
+              blocksHtml += `<li>${escapeHtml(src)}</li>`;
             });
-            html += '</ul>';
+            blocksHtml += '</ul>';
           }
-          html += `</div>`;
+          blocksHtml += `</div>`;
+          blocksHtml += `</div>`;
         });
       }
-      html += `</div>`;
+      html += `<div class=\"claim-blocks-wrapper\">${blocksHtml}</div>`;
     }
     return html;
   }

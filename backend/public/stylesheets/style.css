@@ -1,5 +1,4 @@
 body {
-  padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -15,15 +14,11 @@ body.dark-bg {
   margin: 0;
 }
 .container {
-  max-width: 725px;
   margin: 60px auto 0 auto;
-  /* background: #23232a; */
-  /* border-radius: 18px; */
-  /* box-shadow: 0 4px 32px 0 #000a, 0 1.5px 0 #2d2d37; */
   padding: 2.5rem 2rem 2rem 2rem;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
 }
 .claimtitle{
   font-size: 2rem;
@@ -44,12 +39,14 @@ body.dark-bg {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
 }
-.input-group {
+.input-group,  .claim-group, .button-wrapper{
   position: relative;
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 40%;
 }
 .input-group .input {
   flex: 1;
@@ -74,7 +71,6 @@ body.dark-bg {
 .button-wrapper {
   position: relative;
   display: inline-block;
-  width: 100%;
 }
 .button-glow {
   position: absolute;
@@ -230,7 +226,6 @@ blocquotek{
 }
 .claim-group {
   margin-top: 1.25rem;
-  width: 100%;
   display: block;
 }
 .claim-group .input {
@@ -323,10 +318,30 @@ blocquotek{
   text-shadow: 0 1px 4px #000a;
 }
 
+/*
 .position-block {
   border-radius: 29px;
   background-color: #1c1b23;
   padding: 43px;
+}*/
+
+.position-block {
+  border-radius: 29px;
+  background-color: #1c1b23;
+  padding: 43px;
+  width: 100%;
+  box-sizing: border-box;
+  margin-left: 1em;
+  margin-bottom: 2em;
+  width: 700px;
+  flex: 0 0 auto;
+}
+
+
+@media (max-width: 720px) {
+  .claim-blocks-wrapper {
+    grid-template-columns: 1fr;
+  }
 }
 
 #blackhole-wrapper, #blackhole-bg {
@@ -355,4 +370,40 @@ blocquotek{
   font-size: 2em;
   margin: 10px 0 25px;
   text-align: center;
+}
+
+/*.claim-blocks-wrapper {
+  column-width: 700px;
+  column-gap: 10px;
+  width: 100%;
+}*/
+.claim-blocks-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Adjust spacing between items as needed */
+  justify-content: flex-start;
+}
+
+
+/*
+.claim-block {
+  break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  page-break-inside: avoid;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  width: 100%;
+}
+*/
+
+.claim-block {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 720px) {
+  .claim-blocks-wrapper {
+    column-width: 100% !important;
+    column-count: 1 !important;
+  }
 }
