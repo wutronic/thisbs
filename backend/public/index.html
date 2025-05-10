@@ -20,7 +20,21 @@
   <!-- TEMP: Firebase SDK and config at top of body -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <!-- The Firebase config and initialization should be injected here by your build tool or a script that reads from your .env file. -->
+  <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQavRD4zyj_OF7_BgmT7847TMCNbi2pow",
+      authDomain: "thisbs-be0b6.firebaseapp.com",
+      projectId: "thisbs-be0b6",
+      storageBucket: "thisbs-be0b6.firebasestorage.app",
+      messagingSenderId: "242218359446",
+      appId: "1:242218359446:web:26182386a23bc04e4c40b7",
+      measurementId: "G-PFSCDDS8NV"
+    };
+    firebase.initializeApp(firebaseConfig);
+    window.auth = firebase.auth();
+  </script>
+  <!-- END TEMP -->
   <div id="beta-tag" class="beta-tag">BETA v0.2</div>
   <canvas id="confetti-canvas"></canvas>
   <div id="particles-bg" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;"></div>
@@ -169,7 +183,7 @@
     </div>
   </div>
   <!-- END TEMP -->
-  <!-- TEMP: Firebase Login Button -->
+  <!-- TEMP: Firebase Login/Logout Button -->
   <button id="show-firebase-login"
           style="position:fixed;top:1rem;right:1rem;z-index:1000;
                  background:#3b82f6;color:#fff;padding:0.75rem 1.5rem;
@@ -177,6 +191,15 @@
                  box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;"
           onclick="openFirebaseModal()">
     Login
+  </button>
+  <button id="firebase-logout-btn"
+          style="display:none;position:fixed;top:1rem;right:1rem;z-index:1000;
+                 background:#ef4444;color:#fff;padding:0.75rem 1.5rem;
+                 border:none;border-radius:8px;font-size:1rem;font-weight:500;
+                 box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;"
+          onclick="firebaseLogout()"
+          aria-label="Log out">
+    Logout
   </button>
   <!-- END TEMP -->
   <!-- TEMP: Ensure Firebase Auth modal JS is after modal and button -->
@@ -203,13 +226,13 @@
     function firebaseGoogleLogin() {
       clearFirebaseError();
       const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithPopup(provider)
+      window.auth.signInWithPopup(provider)
         .then(closeFirebaseModal)
         .catch(e => showFirebaseError(e));
     }
     function firebaseAnonymousLogin() {
       clearFirebaseError();
-      auth.signInAnonymously()
+      window.auth.signInAnonymously()
         .then(closeFirebaseModal)
         .catch(e => showFirebaseError(e));
     }
@@ -218,7 +241,7 @@
       clearFirebaseError();
       const email = document.getElementById('firebase-email').value;
       const password = document.getElementById('firebase-password').value;
-      auth.signInWithEmailAndPassword(email, password)
+      window.auth.signInWithEmailAndPassword(email, password)
         .then(closeFirebaseModal)
         .catch(e => showFirebaseError(e));
     }
@@ -227,11 +250,11 @@
       clearFirebaseError();
       const phone = document.getElementById('firebase-phone').value;
       const codeInput = document.getElementById('firebase-sms-code');
-      if (!confirmationResult) {
+      if (!window.confirmationResult) {
         // Send SMS
-        auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+        window.auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
           .then(function(result) {
-            confirmationResult = result;
+            window.confirmationResult = result;
             codeInput.style.display = 'block';
             showFirebaseError({ message: 'SMS code sent. Enter it below.' });
           })
@@ -239,7 +262,7 @@
       } else {
         // Confirm SMS code
         const code = codeInput.value;
-        confirmationResult.confirm(code)
+        window.confirmationResult.confirm(code)
           .then(closeFirebaseModal)
           .catch(e => showFirebaseError(e));
       }
@@ -252,12 +275,25 @@
       document.getElementById('firebase-login-error').style.display = 'none';
       document.getElementById('error-message').textContent = '';
     }
-    auth.onAuthStateChanged(user => {
-      const loginButton = document.getElementById('show-firebase-login');
+    function firebaseLogout() {
+      window.auth.signOut()
+        .then(() => {
+          document.getElementById('firebase-logout-btn').style.display = 'none';
+          document.getElementById('show-firebase-login').style.display = 'inline-block';
+          // Optionally show a toast or message here
+        })
+        .catch(e => alert('Logout failed: ' + e.message));
+    }
+    // Update auth state listener to toggle login/logout buttons
+    window.auth.onAuthStateChanged(user => {
+      const loginBtn = document.getElementById('show-firebase-login');
+      const logoutBtn = document.getElementById('firebase-logout-btn');
       if (user) {
-        loginButton.textContent = 'Logged in as ' + (user.email || user.phoneNumber || user.displayName || 'User');
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
       } else {
-        loginButton.textContent = 'Login';
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
       }
     });
   </script>
