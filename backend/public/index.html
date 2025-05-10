@@ -18,24 +18,19 @@
 </head>
 <body class="dark-bg">
   <!-- TEMP: Firebase SDK and config at top of body -->
+  <script src="/firebase-config.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script>
-    // Your Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAQavRD4zyj_OF7_BgmT7847TMCNbi2pow",
-      authDomain: "thisbs-be0b6.firebaseapp.com",
-      projectId: "thisbs-be0b6",
-      storageBucket: "thisbs-be0b6.firebasestorage.app",
-      messagingSenderId: "242218359446",
-      appId: "1:242218359446:web:26182386a23bc04e4c40b7",
-      measurementId: "G-PFSCDDS8NV"
-    };
-    firebase.initializeApp(firebaseConfig);
+    // Use config from generated file
+    firebase.initializeApp(window.FIREBASE_CONFIG);
     window.auth = firebase.auth();
   </script>
   <!-- END TEMP -->
-  <div id="beta-tag" class="beta-tag">BETA v0.2</div>
+  <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;">
+    <div id="beta-tag" class="beta-tag">BETA v0.2</div>
+    <span id="credit-status" style="margin-left: 8px; font-weight: bold;"></span>
+  </div>
   <canvas id="confetti-canvas"></canvas>
   <div id="particles-bg" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;"></div>
   <a-hole id="blackhole-bg" style="position:fixed;z-index:1;top:0;left:0;width:100vw;height:100vh;pointer-events:none;display:none;"><canvas class="js-canvas"></canvas><div class="aura"></div><div class="overlay"></div></a-hole>
@@ -298,5 +293,6 @@
     });
   </script>
   <!-- END TEMP -->
+  <script src="/scripts/firebase-auth.js"></script>
 </body>
 </html>
