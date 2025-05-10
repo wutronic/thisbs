@@ -120,7 +120,7 @@ CREATIVE-BLACK-HOLE ANIMATION INTEGRATION LOG (2024-06-13):
 - Debugged canvas sizing issues: animation was initializing with zero size when hidden, causing OffscreenCanvas errors.
 - Final solution: on show, remove and re-add the <a-hole> element to the DOM before setting display:block, forcing correct initialization and canvas sizing.
 - Progress bar, status text, and all UI elements remain visible above the animation.
-- All changes tested and confirmed working; logs and error handling improved for future debugging.
+- All changes tested and confirmed working; logs and error handling improved for future debugging. 
 
 ## Next.js Migration & Modern Auth Integration Plan (2024-06-14)
 
@@ -174,4 +174,19 @@ CREATIVE-BLACK-HOLE ANIMATION INTEGRATION LOG (2024-06-13):
 - [x] Installed NextAuth.js as the authentication provider for the Next.js migration. Will configure for both social (Google, GitHub, etc.) and email/password login.
 - [ ] Configure NextAuth.js for both social (Google, GitHub, etc.) and email/password login.
 - [ ] Set up provider credentials in .env.local.
-- [ ] Implement the login modal and integrate it with the static landing page. 
+- [ ] Implement the login modal and integrate it with the static landing page.
+
+GUEST CREDIT ENDPOINT SPLIT LOG (2024-06-14):
+- Split /api/guest-credit into GET (peek, no decrement) and POST (decrement) endpoints for clarity and security.
+- GET /api/guest-credit returns current credits for guest_id (from cookie or query), does not decrement.
+- POST /api/guest-credit decrements credits by 1 (if available) and returns new value.
+- Rationale: Prevents accidental credit loss from polling/UI refreshes, makes intent explicit, and aligns with best API practices.
+- Refactored frontend (public/scripts/firebase-auth.js) to use GET for peeking and POST for decrementing.
+- Updated memory-bank/04-api-documentation.md to document both endpoints and /api/guest-id, with request/response formats and usage.
+- This change improves maintainability, security, and future extensibility of the guest credit system. 
+
+GUEST CREDIT PERSISTENCE MIGRATION LOG (2024-06-14):
+- Migrated guest credit storage from in-memory object to persistent SQLite database using Knex.
+- guest_credits table schema: guest_id (primary key), date (YYYY-MM-DD), credits (int), created_at (timestamp).
+- All guest credit API endpoints now read/write to the database, ensuring credits persist across server restarts and can be managed reliably.
+- Updated API documentation to reflect this change. 

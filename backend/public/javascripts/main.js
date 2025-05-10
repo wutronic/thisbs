@@ -178,6 +178,116 @@ document.addEventListener('DOMContentLoaded', function () {
     if (particlesBg) particlesBg.classList.add('hidden');
   }
 
+  // === CREDIT SYSTEM LOGIC ===
+  const creditStatus = document.getElementById('credit-status');
+  let currentCredits = null;
+  let isCreditExhausted = false;
+
+  async function fetchCredits() {
+    try {
+      // Always use user-credit endpoints due to mock auth
+      const res = await fetch('/users/user-credit');
+      if (!res.ok) throw new Error('Failed to fetch credits');
+      const data = await res.json();
+      currentCredits = data.credits;
+      updateCreditStatus();
+      console.log('[CREDITS] Fetched credits:', currentCredits);
+      if (currentCredits <= 0) {
+        disableFormForCredits();
+      } else {
+        enableFormForCredits();
+      }
+    } catch (err) {
+      creditStatus.textContent = 'Error fetching credits';
+      creditStatus.style.color = '#f87171';
+      console.error('[CREDITS] Error fetching credits:', err);
+    }
+  }
+
+  async function decrementCredits() {
+    try {
+      const res = await fetch('/users/user-credit', { method: 'POST' });
+      if (!res.ok) throw new Error('Failed to decrement credits');
+      const data = await res.json();
+      currentCredits = data.credits;
+      updateCreditStatus();
+      console.log('[CREDITS] Decremented credits, now:', currentCredits);
+      if (currentCredits <= 0) {
+        disableFormForCredits();
+      }
+    } catch (err) {
+      creditStatus.textContent = 'Error decrementing credits';
+      creditStatus.style.color = '#f87171';
+      console.error('[CREDITS] Error decrementing credits:', err);
+    }
+  }
+
+  function updateCreditStatus() {
+    if (currentCredits === null) {
+      creditStatus.textContent = '';
+      return;
+    }
+    creditStatus.textContent = `Credits: ${currentCredits}`;
+    creditStatus.style.color = currentCredits > 0 ? '#fff' : '#f87171';
+  }
+
+  function disableFormForCredits() {
+    isCreditExhausted = true;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.classList.add('button-disabled');
+    input.disabled = true;
+    claimInput.disabled = true;
+    creditStatus.textContent = 'No credits left. Please wait for reset or log in.';
+    creditStatus.style.color = '#f87171';
+    console.log('[CREDITS] Credits exhausted, form disabled');
+  }
+
+  function enableFormForCredits() {
+    isCreditExhausted = false;
+    const submitBtn = form.querySelector('button[type="submit"]');
+    submitBtn.disabled = false;
+    submitBtn.classList.remove('button-disabled');
+    input.disabled = false;
+    claimInput.disabled = false;
+    updateCreditStatus();
+    console.log('[CREDITS] Credits available, form enabled');
+  }
+
+  // Fetch credits on page load
+  fetchCredits();
+
+  // Patch form submit handler to decrement credits after successful /api/transcribe
+  const origFormSubmit = form.onsubmit;
+  form.addEventListener('submit', async function (e) {
+    if (isCreditExhausted) {
+      e.preventDefault();
+      return;
+    }
+    // Let the original handler run
+    if (origFormSubmit) origFormSubmit(e);
+    // Wait for /api/transcribe to finish (hook into result rendering)
+    // Use MutationObserver to detect result rendering
+    const container = form.parentNode;
+    const observer = new MutationObserver(async (mutationsList, observer) => {
+      for (const mutation of mutationsList) {
+        if (mutation.addedNodes.length > 0) {
+          for (const node of mutation.addedNodes) {
+            if (node.classList && node.classList.contains('result')) {
+              // Only decrement credits if transcript or transcriptJson present
+              if (node.innerHTML.includes('collapsible-transcript') || node.innerHTML.includes('claim-blocks-wrapper')) {
+                await decrementCredits();
+              }
+              observer.disconnect();
+              return;
+            }
+          }
+        }
+      }
+    });
+    observer.observe(container, { childList: true });
+  });
+
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     // Animate container to top

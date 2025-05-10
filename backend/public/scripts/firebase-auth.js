@@ -3,7 +3,6 @@ const CREDIT_KEY = 'guest_credits';
 const CREDIT_DATE_KEY = 'guest_credits_date';
 const GUEST_CREDITS_PER_DAY = 1;
 const USER_CREDITS_PER_DAY = 6; // 1 base + 5 bonus
-const GUEST_ID_KEY = 'guest_id';
 
 const creditStatusEl = document.getElementById('credit-status');
 
@@ -21,42 +20,18 @@ function resetGuestCreditsIfNeeded() {
   }
 }
 
-async function fetchGuestId() {
-  let guestId = localStorage.getItem(GUEST_ID_KEY);
-  if (!guestId) {
-    const res = await fetch('/api/guest-id', { credentials: 'include' });
-    const data = await res.json();
-    guestId = data.guest_id;
-    localStorage.setItem(GUEST_ID_KEY, guestId);
-    console.log('[DEBUG] New guest_id created:', guestId);
+function getGuestCredits() {
+  resetGuestCreditsIfNeeded();
+  return parseInt(localStorage.getItem(CREDIT_KEY) || '0', 10);
+}
+
+function decrementGuestCredits() {
+  let credits = getGuestCredits();
+  if (credits > 0) {
+    credits -= 1;
+    localStorage.setItem(CREDIT_KEY, credits);
   }
-  return guestId;
-}
-
-async function getGuestCredits() {
-  const guestId = await fetchGuestId();
-  console.log('[DEBUG] getGuestCredits() using guest_id:', guestId);
-  const res = await fetch(`/api/guest-credit?guest_id=${encodeURIComponent(guestId)}`, {
-    method: 'GET',
-    credentials: 'include',
-  });
-  const data = await res.json();
-  console.log('[DEBUG] getGuestCredits() response:', data);
-  return data.credits;
-}
-
-async function decrementGuestCredits() {
-  const guestId = await fetchGuestId();
-  console.log('[DEBUG] decrementGuestCredits() using guest_id:', guestId);
-  const res = await fetch('/api/guest-credit', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify({ guest_id: guestId })
-  });
-  const data = await res.json();
-  console.log('[DEBUG] decrementGuestCredits() response:', data);
-  return data.credits;
+  return credits;
 }
 
 function updateCreditStatusUI(credits, isLoggedIn) {
@@ -104,14 +79,10 @@ let currentUser = null;
 async function refreshCredits() {
   if (currentUser) {
     const credits = await getUserCredits(currentUser);
-    console.log('[DEBUG] refreshCredits() user credits:', credits);
     updateCreditStatusUI(credits, true);
-    console.log('[DEBUG] UI updated to:', creditStatusEl.textContent);
   } else {
-    const credits = await getGuestCredits();
-    console.log('[DEBUG] refreshCredits() guest credits:', credits);
+    const credits = getGuestCredits();
     updateCreditStatusUI(credits, false);
-    console.log('[DEBUG] UI updated to:', creditStatusEl.textContent);
   }
 }
 
@@ -126,7 +97,7 @@ window.getAvailableCredits = async function() {
   if (currentUser) {
     return await getUserCredits(currentUser);
   } else {
-    return await getGuestCredits();
+    return getGuestCredits();
   }
 };
 
@@ -134,7 +105,7 @@ window.decrementCredits = async function() {
   if (currentUser) {
     return await decrementUserCredits(currentUser);
   } else {
-    return await decrementGuestCredits();
+    return decrementGuestCredits();
   }
 };
 

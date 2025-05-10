@@ -17,7 +17,11 @@ form.addEventListener('submit', async function (e) {
     submitBtn.classList.remove('button-disabled');
     return;
   }
-  await window.decrementCredits();
+  const guestId = localStorage.getItem('guest_id');
+  console.log('[DEBUG] About to decrement credits. guest_id:', guestId);
+  const decResult = await window.decrementCredits();
+  console.log('[DEBUG] decrementCredits() result:', decResult);
   await window.refreshCredits && window.refreshCredits();
+  console.log('[DEBUG] After refreshCredits, UI shows:', document.getElementById('credit-status').textContent);
   // ... existing code ...
 }); 
