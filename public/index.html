@@ -1,0 +1,27 @@
+<body class="dark-bg">
+  <!-- TEMP: Firebase SDK and config at top of body -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script>
+    // Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAQavRD4zyj_OF7_BgmT7847TMCNbi2pow",
+      authDomain: "thisbs-be0b6.firebaseapp.com",
+      projectId: "thisbs-be0b6",
+      storageBucket: "thisbs-be0b6.firebasestorage.app",
+      messagingSenderId: "242218359446",
+      appId: "1:242218359446:web:26182386a23bc04e4c40b7",
+      measurementId: "G-PFSCDDS8NV"
+    };
+    firebase.initializeApp(firebaseConfig);
+    window.auth = firebase.auth();
+  </script>
+  <!-- END TEMP -->
+  <div class="container" style="position:relative;z-index:2;">
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span id="beta-tag">BETA</span><span id="credit-status" style="margin-left: 8px; font-weight: bold;"></span>
+    </div>
+    <div id="auth-controls"></div>
+  </div>
+  <script src="/scripts/firebase-auth.js"></script>
+</body> 
