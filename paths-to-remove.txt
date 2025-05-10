@@ -1,0 +1,6 @@
+node_modules
+.next
+dist
+build
+backend/public/assets/make_the_eye_look_around_and_blink_seed3217157896-mp4_1746405550999.mp4
+backend/eng.traineddata

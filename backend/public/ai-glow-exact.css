@@ -1,0 +1,296 @@
+/* === AI Glow Effect (parent-relative sizing) === */
+
+@property --a {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --l {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --x {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+@property --y {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --o {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+.ai {
+  width: var(--ai-size);
+  height: var(--ai-size);
+  aspect-ratio: 1;
+  --bg-color: color-mix(in srgb, #7b7bf4, transparent 90%);
+  background: radial-gradient(
+      60% 75% at center,
+      var(--bg-color) 50%,
+      transparent 50%
+    ),
+    radial-gradient(75% 60% at center, var(--bg-color) 50%, transparent 50%);
+  padding: calc(var(--ai-size) / 4);
+  display: grid;
+  place-items: center;
+  position: relative;
+  border-radius: 50%;
+  transform: scale(1.4);
+}
+
+:root {
+  --count: 4;
+  --radius: 0.15;
+}
+
+@keyframes ai {
+  from {
+    --a: 360deg;
+    --l: 0.35;
+    --o: 1;
+  }
+
+  30% {
+    --l: 1.5;
+  }
+
+  70% {
+    --o: 0.4;
+    --l: 0.05;
+  }
+
+  98% {
+    --o: 0.7;
+  }
+
+  to {
+    --a: 0deg;
+    --l: 0.35;
+    --o: 1;
+  }
+}
+
+.c {
+  opacity: 0.9;
+  position: absolute;
+  width: 25%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  --offset-per-item: calc(360deg / var(--count));
+  --current-angle-offset: calc(var(--offset-per-item) * var(--i) + var(--a));
+  translate: calc(
+      cos(var(--current-angle-offset)) * var(--ai-size) * var(--radius) + var(--x, 0)
+    )
+    calc(sin(var(--current-angle-offset)) * var(--ai-size) * var(--radius) * -1);
+  scale: calc(0.6 + var(--l));
+  animation: ai 5.5s cubic-bezier(0.45, -0.35, 0.16, 1.5) infinite;
+  transition: opacity 0.3s linear;
+  opacity: var(--o, 1);
+}
+.c1 {
+  background: #79e3ee;
+  background: radial-gradient(50% 50% at center, #79e3ee, #e7e7fb);
+  background: radial-gradient(50% 50% at center, #c979ee, #74bcd6);
+
+  --x: 0.025 * var(--ai-size);
+  width: 40%;
+  animation-timing-function: cubic-bezier(0.12, 0.32, 0.68, 0.24);
+}
+
+.c2 {
+  background: radial-gradient(50% 50% at center, #ef788c, #e7e7fb);
+  width: 37.5%;
+}
+
+.c3 {
+  background: radial-gradient(50% 50% at center, #eb7fc6, transparent);
+  width: 12.5%;
+  opacity: 0.6;
+  --x: -0.025 * var(--ai-size);
+}
+
+.c4 {
+  background: #6d67c8;
+  animation-timing-function: cubic-bezier(0.39, -0.03, 0.75, 0.47);
+}
+
+.container {
+  overflow: hidden;
+  background: #b6a9f8;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  aspect-ratio: 1;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.glass {
+  overflow: hidden;
+  position: absolute;
+  --w: 0.0125 * var(--ai-size);
+  inset: calc(25% - var(--w));
+  border-radius: 50%;
+  backdrop-filter: blur(0.0325 * var(--ai-size));
+  box-shadow: 0 0 0.2 * var(--ai-size) color-mix(in srgb, black, transparent 70%);
+  background: radial-gradient(
+    0.25 * var(--ai-size) at 70% 30%,
+    rgba(255, 255, 255, 0.7),
+    transparent
+  );
+}
+
+.glass:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  --c: rgba(255, 255, 255, 0.03);
+  --w: 0.0015 * var(--ai-size);
+  --g: 0.0045 * var(--ai-size);
+
+  background: repeating-linear-gradient(
+    var(--c),
+    var(--c),
+    var(--w),
+    transparent var(--w),
+    transparent calc(var(--w) + var(--g))
+  );
+  border-radius: inherit;
+  border: 0.025 * var(--ai-size) rgba(255, 255, 255, 0.1) solid;
+}
+
+body {
+  background: radial-gradient(circle at center, rgba(0,0,0,.5), transparent 50%), #221f28;
+  height: 100dvh;
+  display: grid;
+  place-items: center;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@property --value {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@property --width-ratio {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+:root {
+  --width: 1vmin;
+  --duration: 8s;
+}
+
+.rings {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  position: absolute;
+  inset: 0;
+  perspective: 0.275 * var(--ai-size);
+  opacity: .9;
+}
+
+.rings:before,
+.rings:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 0, 0, 1);
+  border-radius: 50%;
+  --width-ratio: 1;
+  border: calc(0.025 * var(--ai-size) * var(--width-ratio, 1)) solid transparent;
+  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+  background: linear-gradient(
+    white,
+    blue,
+    magenta,
+    violet,
+    lightyellow) border-box;
+  mask-composite: exclude;
+  animation: ring 8s ease-in-out infinite;
+  --start: 180deg;
+  --value: var(--start);
+  --scale: 1;
+  transform: rotateY(var(--value)) rotateX(var(--value)) rotateZ(var(--value))
+    scale(var(--scale));
+}
+
+.rings:before {
+  --start: 180deg;
+}
+
+.rings:after {
+  --start: 90deg;
+}
+
+.rings > .rings:before {
+  --start: 360deg;
+}
+
+.rings > .rings:after {
+  --start: 270deg;
+}
+
+@keyframes ring {
+  from {
+    --value: var(--start);
+    --scale: 1;
+  }
+  50% {
+    --scale: 1.2;
+    --width-ratio: 1.5;
+  }
+  70% {
+    --scale: 1;
+    --value: calc(var(--start) + 180deg);
+    --width-ratio: 1;
+  }
+
+  80% {
+    --scale: 1.2;
+    --width-ratio: 1.5;
+  }
+
+  to {
+    --value: calc(var(--start) + 360deg);
+    --scale: 1;
+    --width-ratio: 1;
+  }
+}
+
+/* Center the logo in the effect */
+.logo-in-ai {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 40%;
+  height: 40%;
+  max-width: 64px;
+  max-height: 64px;
+  object-fit: contain;
+  z-index: 2;
+  display: block;
+  pointer-events: auto;
+} 

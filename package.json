@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "franc-min": "^6.2.0",
+    "metadownloader": "^1.0.0",
+    "next-auth": "^4.24.11",
+    "sharp": "^0.34.1",
+    "tesseract.js": "^6.0.1",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.4"
+  }
+}

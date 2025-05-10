@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video-to-Text Transcription</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon_io/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon_io/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon_io/favicon-16x16.png">
+  <link rel="manifest" href="/favicon_io/site.webmanifest">
+  <link rel="shortcut icon" href="/favicon_io/favicon.ico">
+  <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Ruda:wght@700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quattrocento:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/creative-black-hole.css">
+  <link rel="stylesheet" href="/particles-bg.css">
+</head>
+<body class="dark-bg">
+  <!-- TEMP: Firebase SDK and config at top of body -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <!-- The Firebase config and initialization should be injected here by your build tool or a script that reads from your .env file. -->
+  <div id="beta-tag" class="beta-tag">BETA v0.2</div>
+  <canvas id="confetti-canvas"></canvas>
+  <div id="particles-bg" style="position:fixed;z-index:0;top:0;left:0;width:100vw;height:100vh;"></div>
+  <a-hole id="blackhole-bg" style="position:fixed;z-index:1;top:0;left:0;width:100vw;height:100vh;pointer-events:none;display:none;"><canvas class="js-canvas"></canvas><div class="aura"></div><div class="overlay"></div></a-hole>
+  <div class="container" style="position:relative;z-index:2;">
+    <div id="centered-container" class="centered-container centered">
+    <img src="/favicon.png" id="logo-img" alt="thisbs logo" class="logo" style="display:block;margin:0 auto 1.5rem auto;width:96px;height:96px;" />
+    <video id="logo-video" class="logo" src="/assets/make_the_eye_look_around_and_blink_seed3217157896-mp4_1746405550999.mp4" style="display:none;margin:0 auto 1.5rem auto;width:96px;height:96px;" autoplay loop muted playsinline></video>
+      <!-- <h1 class="title">IS THIS BS?</h1> -->
+    <form id="transcribe-form" class="form" autocomplete="off">
+      <div class="input-group">
+          <input type="url" id="video-url" class="input" placeholder="is this bs? paste link here" required />
+        <button type="button" id="paste-btn" class="paste-btn" title="Paste from clipboard">
+          <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 170 170" width="24" height="24">
+            <defs>
+              <style>.st0 { fill: #3f4552; }</style>
+            </defs>
+            <path class="st0" d="M120.41,42.5v-7.09c0-11.73-9.51-21.25-21.25-21.25h-7.08v-7.08c0-1.88-.75-3.69-2.08-5.01s-3.13-2.07-5.01-2.07h-42.5c-3.91,0-7.09,3.17-7.09,7.09v7.08h-7.08c-11.74,0-21.25,9.52-21.25,21.25v92.09c0,11.73,9.51,21.25,21.25,21.25h21.25v-70.84c0-9.39,3.73-18.4,10.37-25.04s15.65-10.37,25.04-10.37h35.42ZM77.91,21.25v7.09h-28.33v-14.17h28.34v7.09Z"/>
+            <path class="st0" d="M141.66,56.66h-56.66c-11.73,0-21.25,9.52-21.25,21.25v70.84c0,11.73,9.52,21.25,21.25,21.25h56.66c11.74,0,21.25-9.52,21.25-21.25v-70.84c0-11.73-9.51-21.25-21.25-21.25ZM127.5,141.66h-28.34c-3.91,0-7.08-3.17-7.08-7.08s3.17-7.09,7.08-7.09h28.34c3.91,0,7.09,3.17,7.09,7.09s-3.17,7.08-7.09,7.08ZM127.5,120.41h-28.34c-3.91,0-7.08-3.17-7.08-7.08s3.17-7.09,7.08-7.09h28.34c3.91,0,7.09,3.17,7.09,7.09s-3.17,7.08-7.09,7.08ZM127.5,99.16h-28.34c-3.91,0-7.08-3.17-7.08-7.08s3.17-7.09,7.08-7.09h28.34c3.91,0,7.09,3.17,7.09,7.09s-3.17,7.08-7.09,7.08Z"/>
+          </svg>
+        </button>
+        <button type="button" id="settings-btn" class="settings-btn" title="Show additional context">
+          <svg id="Layer_1" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 170 170" width="24" height="24">
+            <defs>
+              <style>.st0 { fill: #3f4552; }</style>
+            </defs>
+            <path class="st0" d="M122.37,18.05H47.63c-17.65,0-31.95,14.31-31.95,31.95h0c0,17.65,14.31,31.95,31.95,31.95h74.74c17.65,0,31.95-14.31,31.95-31.95h0c0-17.65-14.31-31.95-31.95-31.95ZM50.03,68.57c-10.25,0-18.57-8.31-18.57-18.57s8.31-18.57,18.57-18.57,18.57,8.31,18.57,18.57-8.31,18.57-18.57,18.57Z"/>
+            <path class="st0" d="M47.63,151.95h74.74c17.65,0,31.95-14.31,31.95-31.95h0c0-17.65-14.31-31.95-31.95-31.95H47.63c-17.65,0-31.95,14.31-31.95,31.95h0c0,17.65,14.31,31.95,31.95,31.95ZM119.97,101.43c10.25,0,18.57,8.31,18.57,18.57s-8.31,18.57-18.57,18.57-18.57-8.31-18.57-18.57,8.31-18.57,18.57-18.57Z"/>
+          </svg>
+        </button>
+      </div>
+      <div class="claim-group js-hide">
+        <input type="text" id="claim-text" class="input" placeholder="Check this specific claim (optional)" />
+      </div>
+      <div class="button-wrapper">
+          <button type="submit" class="button">Scan</button>
+        <div class="button-glow"></div>
+      </div>
+    </form>
+    <div class="progress-container" id="progress-container" style="display:none;">
+      <div class="progress-bar" id="progress-bar"></div>
+      <div class="progress-label" id="progress-label"></div>
+    </div>
+    <div class="status-row" style="display:flex;align-items:center;justify-content:center;margin-top:2rem;gap:1rem;">
+      <div id="spinner" class="spinner" style="display:none;"></div>
+      <span id="status-text" class="status-text">Ready for BS scan</span>
+      </div>
+    </div>
+  </div>
+  <script src="/javascripts/main.js"></script>
+  <script type="module" src="/creative-black-hole.js"></script>
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <script src="/particles-bg.js"></script>
+  <!-- TEMP: Modern styled Firebase Auth Login Modal -->
+  <style>
+    #firebase-login-modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.8); z-index: 9999; align-items: center; justify-content: center;
+      backdrop-filter: blur(2px);
+      transition: opacity 0.2s;
+    }
+    #firebase-login-modal .modal-content {
+      background: #18181b; color: #fff; padding: 2rem; border-radius: 16px;
+      min-width: 320px; max-width: 90vw; box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+      position: relative; font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+      border: 1px solid #27272a;
+      animation: fadeIn 0.2s;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
+    #firebase-login-modal h2 { margin-top: 0; font-size: 1.5rem; font-weight: 600; text-align: center; }
+    #firebase-login-modal .close-btn {
+      position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: #fff;
+      font-size: 1.5rem; cursor: pointer; border-radius: 50%; width: 2.5rem; height: 2.5rem;
+      display: flex; align-items: center; justify-content: center; transition: background 0.2s;
+    }
+    #firebase-login-modal .close-btn:hover { background: #27272a; }
+    #firebase-login-modal button, #firebase-login-modal input {
+      font-size: 1rem; border-radius: 8px; border: 1px solid #27272a; outline: none;
+    }
+    #firebase-login-modal button {
+      background: #27272a; color: #fff; padding: 0.75rem 1rem; margin-bottom: 1rem;
+      width: 100%; font-weight: 500; cursor: pointer; transition: background 0.2s, color 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+    }
+    #firebase-login-modal button:hover, #firebase-login-modal button:focus {
+      background: #3b82f6; color: #fff;
+    }
+    #firebase-login-modal .divider {
+      display: flex; align-items: center; text-align: center; margin: 1.5rem 0 1rem 0;
+    }
+    #firebase-login-modal .divider::before, #firebase-login-modal .divider::after {
+      content: ''; flex: 1; border-bottom: 1px solid #27272a;
+    }
+    #firebase-login-modal .divider:not(:empty)::before { margin-right: .75em; }
+    #firebase-login-modal .divider:not(:empty)::after { margin-left: .75em; }
+    #firebase-login-modal input {
+      width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem; margin-bottom: 0.75rem;
+      background: #232326; color: #fff; border: 1px solid #27272a;
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    #firebase-login-modal input:focus {
+      border: 1.5px solid #3b82f6; box-shadow: 0 0 0 2px #3b82f6aa;
+    }
+    #firebase-login-modal .input-icon {
+      position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: #a1a1aa;
+      font-size: 1.1rem;
+    }
+    #firebase-login-modal .input-group { position: relative; }
+    #firebase-login-modal .error {
+      background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5;
+      padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem; display: none;
+      font-size: 0.95rem; align-items: center; gap: 0.5rem;
+    }
+    @media (max-width: 500px) {
+      #firebase-login-modal .modal-content { padding: 1rem; min-width: 90vw; }
+    }
+  </style>
+  <div id="firebase-login-modal">
+    <div class="modal-content">
+      <button class="close-btn" onclick="closeFirebaseModal()" aria-label="Close">&#10005;</button>
+      <h2>Sign In</h2>
+      <div id="firebase-login-error" class="error"><span style="font-size:1.2em;">&#9888;</span> <span id="error-message"></span></div>
+      <button onclick="firebaseGoogleLogin()"> <span style="font-size:1.2em;">&#128279;</span> Continue with Google</button>
+      <button onclick="firebaseAnonymousLogin()"> <span style="font-size:1.2em;">&#128100;</span> Continue as Guest</button>
+      <div class="divider">or continue with</div>
+      <form id="firebase-email-form" onsubmit="firebaseEmailLogin(event)">
+        <div class="input-group">
+          <span class="input-icon">&#9993;</span>
+          <input id="firebase-email" type="email" placeholder="Email address" required />
+        </div>
+        <div class="input-group">
+          <span class="input-icon">&#128274;</span>
+          <input id="firebase-password" type="password" placeholder="Password" required />
+        </div>
+        <button type="submit">Sign in with Email</button>
+      </form>
+      <form id="firebase-phone-form" onsubmit="firebasePhoneLogin(event)">
+        <div class="input-group">
+          <span class="input-icon">&#128222;</span>
+          <input id="firebase-phone" type="tel" placeholder="Phone (+1234567890)" required />
+        </div>
+        <div id="recaptcha-container" style="margin-bottom:0.75rem;"></div>
+        <input id="firebase-sms-code" type="text" placeholder="SMS Code" style="display:none;" />
+        <button type="submit">Sign in with Phone</button>
+      </form>
+    </div>
+  </div>
+  <!-- END TEMP -->
+  <!-- TEMP: Firebase Login Button -->
+  <button id="show-firebase-login"
+          style="position:fixed;top:1rem;right:1rem;z-index:1000;
+                 background:#3b82f6;color:#fff;padding:0.75rem 1.5rem;
+                 border:none;border-radius:8px;font-size:1rem;font-weight:500;
+                 box-shadow:0 2px 8px rgba(0,0,0,0.08);cursor:pointer;"
+          onclick="openFirebaseModal()">
+    Login
+  </button>
+  <!-- END TEMP -->
+  <!-- TEMP: Ensure Firebase Auth modal JS is after modal and button -->
+  <script>
+    let confirmationResult = null;
+    function openFirebaseModal() {
+      document.getElementById('firebase-login-modal').style.display = 'flex';
+      document.getElementById('firebase-login-error').style.display = 'none';
+      document.getElementById('error-message').textContent = '';
+      // Reset phone form
+      document.getElementById('firebase-sms-code').style.display = 'none';
+      document.getElementById('firebase-phone-form').reset();
+      if (!window.recaptchaVerifier) {
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+          size: 'invisible',
+          callback: function(response) {}
+        });
+        window.recaptchaVerifier.render();
+      }
+    }
+    function closeFirebaseModal() {
+      document.getElementById('firebase-login-modal').style.display = 'none';
+    }
+    function firebaseGoogleLogin() {
+      clearFirebaseError();
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(closeFirebaseModal)
+        .catch(e => showFirebaseError(e));
+    }
+    function firebaseAnonymousLogin() {
+      clearFirebaseError();
+      auth.signInAnonymously()
+        .then(closeFirebaseModal)
+        .catch(e => showFirebaseError(e));
+    }
+    function firebaseEmailLogin(e) {
+      e.preventDefault();
+      clearFirebaseError();
+      const email = document.getElementById('firebase-email').value;
+      const password = document.getElementById('firebase-password').value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(closeFirebaseModal)
+        .catch(e => showFirebaseError(e));
+    }
+    function firebasePhoneLogin(e) {
+      e.preventDefault();
+      clearFirebaseError();
+      const phone = document.getElementById('firebase-phone').value;
+      const codeInput = document.getElementById('firebase-sms-code');
+      if (!confirmationResult) {
+        // Send SMS
+        auth.signInWithPhoneNumber(phone, window.recaptchaVerifier)
+          .then(function(result) {
+            confirmationResult = result;
+            codeInput.style.display = 'block';
+            showFirebaseError({ message: 'SMS code sent. Enter it below.' });
+          })
+          .catch(e => showFirebaseError(e));
+      } else {
+        // Confirm SMS code
+        const code = codeInput.value;
+        confirmationResult.confirm(code)
+          .then(closeFirebaseModal)
+          .catch(e => showFirebaseError(e));
+      }
+    }
+    function showFirebaseError(e) {
+      document.getElementById('firebase-login-error').style.display = 'flex';
+      document.getElementById('error-message').textContent = e.message;
+    }
+    function clearFirebaseError() {
+      document.getElementById('firebase-login-error').style.display = 'none';
+      document.getElementById('error-message').textContent = '';
+    }
+    auth.onAuthStateChanged(user => {
+      const loginButton = document.getElementById('show-firebase-login');
+      if (user) {
+        loginButton.textContent = 'Logged in as ' + (user.email || user.phoneNumber || user.displayName || 'User');
+      } else {
+        loginButton.textContent = 'Login';
+      }
+    });
+  </script>
+  <!-- END TEMP -->
+</body>
+</html>
